@@ -1,4 +1,6 @@
 //функция для предоставления доступа только зарегистрированным пользователям
+const jwt = require("jsonwebtoken");
+const {secret} = require("../comfig");
 module.exports = function (req, res, next) {
     if (req.method === 'OPTIONS') {
         next()
@@ -9,10 +11,11 @@ module.exports = function (req, res, next) {
         if (!token) {//если токена нет, то возвращаем ошибку клиенту
             return res.status(403).json({message: "Пользователь не авторизован"})
         }
-
+        const decodedData = jwt.verify(token, secret)
+        req.user = decodedData
+        next()
     } catch (e) {
         console.log(e)
         return res.status(403).json({message: "Пользователь не авторизован"})
     }
-
 };
