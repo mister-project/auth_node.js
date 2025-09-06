@@ -3,8 +3,6 @@ const Router = require('express') //импорт роутера из express
 const router = new Router()// создание объекта из роутера
 const controller = require('./authController')
 const {check} = require('express-validator') //вызов функции для валидации
-const authMiddleware = require('./middlewaree/authMiddleware') //предвар. проверка авторизации
-const roleMiddleware = require('./middlewaree/roleMiddleware') //проверка прав доступа по роли пользователя
 
 
 // Организация запросов
@@ -14,6 +12,6 @@ router.post('/registration', [
 ], controller.registration)
 
 router.post('/login', controller.login) //проверка логина
-router.get('/users', roleMiddleware(['ADMIN']), controller.getUsers) //установка различных доступов
+router.get('/users', controller.getUsers) //установка различных доступов
 
 module.exports = router //выдача метода наружу (экспорт)

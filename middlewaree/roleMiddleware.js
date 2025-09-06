@@ -13,16 +13,8 @@ module.exports = function (roles) {
                 return res.status(403).json({message: "Пользователь не авторизован"})
             }
             const {roles: userRoles} = jwt.verify(token, secret)
-
-            //проверка разрешена ли роль пользователя для данной функции
-            let hasRole = false //создание переменной ключа - будет принимать значения false/true
-            userRoles.forEach(role => { //перебираем роли пользователя
-                if(roles.includes(role)) { //ищем совпадения хотя бы с 1-й разрешенной ролью
-                    hasRole = true; // если есть совпадение, переключаем значение переменной
                 }
             })
-            if (!hasRole) { //если роль не предполагает разрешения
-                return res.status(403).json({massage:"У вас нет доступа к списку"})
             }
             next()
         } catch (e) {
