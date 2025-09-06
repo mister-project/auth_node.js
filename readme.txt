@@ -20,4 +20,5 @@ qwerty123
 webprograms
 
 установленные библиотеки:
-npm i jsonwebtoken
+express-validator - проверка полей на заполнение
+jsonwebtoken - генерация токенов при предоставлении доступа

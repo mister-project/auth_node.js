@@ -23,7 +23,7 @@ class authController {
         async registration(req, res) {
         try{
             const errors = validationResult(req); //вывод ошибок валидации
-            if(!errors.isEmpty()) { //проверка наличия ошибок
+            if(!errors.isEmpty()) { //Если массив ошибок не пустой, то выводим сообщение об ошибке
                 return res.status(400).json({message: "Ошибка при регистрации", errors});
             }
             const {username, password} = req.body// вытаскиваем нужные поля из тела запроса и делаем реструктуризацию
@@ -36,7 +36,7 @@ class authController {
 
             //Создание нового пользователя
             const hashPassword = bcrypt.hashSync(password, 7); //хэширование пароля
-            const userRole = await Role.findOne({value: "USER"})
+            const userRole = await Role.findOne({value: "ADMIN"}) //!!!ОПРЕДЕЛЕНИЕ РОЛИ НОВОГО ПОЛЬЗОВАТЕЛЯ
 
             const user = new User({username, password: hashPassword, roles: userRole.value}) //создание пользователя
 
@@ -47,7 +47,6 @@ class authController {
             console.log(e)
             res.status(400).json({message: 'Registration error'})//оповещение клиента, присылающего запросы об ошибке
         }
-
     }
 
     //Функция авторизации имеющегося пользователя
@@ -55,29 +54,25 @@ class authController {
         try{
             const {username, password} = req.body //вытаскиваем из тела запроса логин и пароль
             const user = await User.findOne({username}) //Ищем полученного пользователя по логину в БД
-            if (!user) { //проверка наличия пользователя и сообщение, если он не найден
+            if (!user) { //проверка наличия пользователя и сообщение, если он НЕ найден
                 return res.status(400).json({message: `Пользователь ${username} не найден`})
             }
-            const validPassword = bcrypt.compareSync(password, user.password) //Получаем пароль и сра
+            const validPassword = bcrypt.compareSync(password, user.password) //Получаем пароль и сравниваем с имеющимся /захэшированным/ в БД
             if (!validPassword) {
                 return res.status(400).json({message: `Введен неверный пароль`})
             }
-
             const token = generateAccessToken(user._id, user.roles) //запуск функции  токена
             return res.json({token})
-
-
         } catch (e) {
             console.log(e)
             res.status(400).json({message: 'Login error'})//оповещение клиента, присылающего запросы об ошибке
         }
 
     }
-    async getUsers(req, res) {//запрос данных по пользователям
+    async getUsers(req, res) {//запрос необходимы данных по пользователям
         try{
             const users = await User.find()
-
-            res.json(users)
+            res.json(users) //тут получаем список пользователей
         } catch (e) {
             console.log(e)
         }
